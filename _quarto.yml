@@ -18,6 +18,9 @@ book:
   appendices:
     - chapters/colophon.qmd
 
+execute:
+  freeze: auto
+
 format:
   html:
     theme: cosmo
