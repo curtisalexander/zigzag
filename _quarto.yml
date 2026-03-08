@@ -5,12 +5,15 @@ project:
 book:
   title: "ZigZag"
   subtitle: "Learning Zig through conversation"
-  author: "c4lex"
+  author: "Curtis Alexander"
   date: today
-  repo-url: https://github.com/c4lex/zigzag
+  repo-url: https://github.com/curtisalexander/zigzag
   repo-actions: [edit, issue]
+  favicon: images/logo.webp
+  sidebar:
+    logo: images/logo.webp
   chapters:
-    - chapters/00-what-this-is.qmd
+    - index.qmd
     - chapters/01-hello-zig.qmd
   appendices:
     - chapters/colophon.qmd
@@ -18,6 +21,7 @@ book:
 format:
   html:
     theme: cosmo
+    css: styles.css
     toc: true
     code-copy: true
     code-overflow: wrap

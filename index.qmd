@@ -35,7 +35,8 @@ The late chapters are where it gets interesting. Zig compiles to WebAssembly, an
 
 Building that is a significant project. It's also a significant Zig project. So the book's final act is building the thing that makes the book better. The last chapter improves chapter one. I like the recursion of that.
 
-## ↯ On tangents
+<details open class="tangent">
+<summary>![](images/socrates.webp){.tangent-icon} ↯ On tangents</summary>
 
 You'll see this symbol — ↯ — marking sections where I've gone off the main path. These aren't apologies. A tangent about the Greek roots of the Socratic method isn't a distraction from learning Zig; it's a *different kind* of learning about the same thing. The zigzag is the path.
 
@@ -43,9 +44,13 @@ Some tangents are short — a paragraph, a stray thought. Others are full sectio
 
 If you're the kind of reader who skips forewords and hates digressions, you can skip every ↯ section and still learn Zig just fine. But I think you'll miss something.
 
+</details>
+
 Speaking of which —
 
-## ↯ Starting from nothing
+<details class="tangent">
+<summary>![](images/socrates.webp){.tangent-icon} ↯ Starting from nothing</summary>
+
 
 If you wanted to do exactly what I'm doing — learn a language in public, with an AI, and turn it into a book — here's everything you'd need. I'm spelling this out because when I started, I had *none* of it. No project directory. No scaffolding. No agent instructions. No outline. I opened a conversation with Claude, said "I want to learn Zig and write a book about it," and we started talking.
 
@@ -126,7 +131,7 @@ Grab a build from [ziglang.org/download](https://ziglang.org/download/), extract
 
 :::
 
-That's it. Three tools. If you can open a terminal, you can do this. (Exact versions and how the pieces fit together are in the [Colophon](colophon.qmd).)
+That's it. Three tools. If you can open a terminal, you can do this. (Exact versions and how the pieces fit together are in the [Colophon](chapters/colophon.qmd).)
 
 ### The method
 
@@ -143,6 +148,8 @@ I opened a blank folder. No `git init`, no template, no `npm create whatever`. I
 Then I said "OK, scaffold it," and the AI created the directory structure, the Quarto config, and this chapter. The chapter you're reading was the first file written. It was written *about* a process that had just barely started. I told it to capture the voice before we knew what the voice was, and somehow that worked, because the constraint forced a decision.
 
 The point is: you don't need to know what you're doing before you start. You especially don't need to know the language you're writing about. That's the whole idea. Start confused. Write it down. Figure it out in public.
+
+</details>
 
 ## What you need
 

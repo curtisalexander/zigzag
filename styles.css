@@ -1,0 +1,40 @@
+/* Tangent sections */
+details.tangent {
+  border-left: 3px solid #c4a35a;
+  padding: 0.75rem 1rem;
+  margin: 1.5rem 0;
+  background: rgba(196, 163, 90, 0.04);
+}
+
+details.tangent summary {
+  cursor: pointer;
+  font-size: 1.25rem;
+  font-weight: 600;
+  font-style: italic;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+details.tangent summary::-webkit-details-marker {
+  display: none;
+}
+
+details.tangent summary::after {
+  content: "▸";
+  margin-left: auto;
+  font-style: normal;
+  transition: transform 0.2s;
+}
+
+details.tangent[open] summary::after {
+  transform: rotate(90deg);
+}
+
+img.tangent-icon {
+  height: 2.5rem;
+  width: auto;
+  display: inline-block;
+  vertical-align: middle;
+}
