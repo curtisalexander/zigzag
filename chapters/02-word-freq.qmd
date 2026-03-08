@@ -1,0 +1,172 @@
+# Reading Real Code {#sec-word-freq}
+
+Chapter 1 was four lines. Now let's read 490.
+
+`word_freq.zig` is a word frequency counter — feed it a text file and it tells you which words appear most often. We'll run it on the Complete Works of Shakespeare because why not. But this chapter isn't about Shakespeare. It's about reading Zig code and asking questions until the fog lifts.
+
+I wrote `word_freq.zig` in [Session 05](https://github.com/curtisalexander/zigzag/blob/main/sessions/session-05-word-freq-and-awk-lite.md), then sat down to read through it line by line. What follows are the questions I actually had — and the answers that clicked.
+
+## The function signature
+
+```{.zig}
+pub fn main() !void {
+```
+
+Five tokens. Four concepts worth unpacking.
+
+### `pub` — public to what?
+
+In Zig, every **file is a module**. There's no `module` keyword. `pub` means "visible to anything that `@import`s this file." Without `pub`, a function is file-private.
+
+Look at `word_freq.zig` — `normalizeWord` and `isStopword` are *not* `pub` because only `main` calls them, within the same file. But `main` must be `pub` because the Zig runtime (the code that calls your entry point) lives in a different module. If you wrote `fn main()` without `pub`, the runtime couldn't find it.
+
+### `main` — the entry point
+
+Yes, `main` is always the entry point. `zig run` looks for `pub fn main` in whatever file you give it. There's no flag to change it, no decorator, no configuration. You can set a different *file* as the root source in `build.zig`, but that file still needs `pub fn main`.
+
+### `void` — no return value
+
+The function returns nothing. The work is all side effects — reading files, printing output.
+
+### `!void` — the interesting part
+
+The `!` means **error union**. `!void` is shorthand for "this function either succeeds (returns void) or returns an error."
+
+This is what makes `try` work:
+
+```{.zig}
+const content = try file.readToEndAlloc(allocator, 10 * 1024 * 1024);
+```
+
+If `readToEndAlloc` fails, `try` propagates that error up to the caller. But it can only do that if the enclosing function *declares* it can return errors. That's what `!void` permits. Write `pub fn main() void` and every `try` in the function becomes a compile error — there's nowhere to propagate to.
+
+<details class="tangent" open>
+<summary>![](../images/socrates.webp){.tangent-icon} ↯ Error propagation in the type system</summary>
+
+This is a big deal. The compiler won't let you ignore errors.
+
+Compare the alternatives:
+
+- **C** — errors are integer return codes. Nothing stops you from calling `open(file)` and never checking if it failed.
+- **Python/JS** — exceptions can fly from anywhere. Nothing in a function signature tells you what might throw.
+- **Go** — `value, err := doThing()` is convention, but `value, _ := doThing()` silently discards the error. The compiler shrugs.
+- **Rust** — `Result<T, E>` is in the type system. You must handle it.
+- **Zig** — `!` is in the type system. You must handle it.
+
+If a function returns `!void`, the caller **must** do one of:
+
+1. **`try`** — propagate it (and the caller's return type must also declare `!`)
+2. **`catch`** — handle it right here
+3. **`catch unreachable`** — assert "this can never fail" (crashes if wrong)
+
+You can't just call it and pretend nothing happened.
+
+The payoff: look at `word_freq.zig`. Every place something can fail — file open, memory allocation, printing — is visibly marked with `try` or `catch`. You can read the code and **see the error paths**. Nothing is hidden. Nothing is silently swallowed.
+
+</details>
+
+## `const` vs. `var`
+
+Zig has two ways to bind a name to a value:
+
+- **`const`** — immutable. Once assigned, it cannot change.
+- **`var`** — mutable. Use when you need to modify it.
+
+Zig's preference is clear: **use `const` unless you need mutation.** The compiler will warn you if you declare `var` but never mutate it.
+
+## The allocator dance
+
+Here's the setup from the top of `main`:
+
+```{.zig}
+var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+defer {
+    const check = gpa.deinit();
+    if (check == .leak) {
+        std.debug.print("Memory leak detected!\n", .{});
+    }
+}
+const allocator = gpa.allocator();
+```
+
+Three lines, three questions.
+
+### Why is `gpa` a `var`?
+
+Because the GPA **mutates its internal state** every time you allocate or free memory. It tracks what's in use, detects leaks, catches double-frees. If it were `const`, none of that bookkeeping could happen. Same reason `counts` (the HashMap) and `entries` (the ArrayList) are `var` — they change internally when you insert or append.
+
+### Why is `allocator` a `const`?
+
+Because `allocator` is an **interface** — a fat pointer containing two things:
+
+1. A pointer back to the GPA instance
+2. A pointer to a vtable (a table of function pointers: alloc, free, resize)
+
+Those two pointers never change. `allocator` always points to the same GPA and always uses the same functions. When you call `allocator.alloc(100)`, it follows the data pointer back to the `var gpa` and mutates *that*.
+
+Think of it like a business card. The card says "call this number for memory services." The card itself (`const`) never changes — same phone number, same address. But the business it points to (`var gpa`) is busy internally, tracking allocations, freeing memory.
+
+<details class="tangent">
+<summary>![](../images/socrates.webp){.tangent-icon} ↯ Pointers and fat pointers</summary>
+
+A **pointer** is a memory address. 64 bits on a modern machine. It says "the thing you want is *over there*."
+
+A **fat pointer** carries extra metadata alongside the address. You've already seen one — a slice (`[]const u8`) is a pointer plus a length:
+
+```
+slice:     [ pointer to first byte | length ]
+```
+
+That's why you can write `word.len`. In C, strings are a bare pointer and you walk until a null byte. Zig's slice carries the length so bounds checking is always possible.
+
+The allocator interface is a different kind of fat pointer:
+
+```
+allocator: [ pointer to GPA instance | pointer to vtable ]
+```
+
+The vtable says "here's how *this particular allocator* does alloc, free, resize." Every allocator type has a different vtable with its own implementations, but they all have the same shape. That's what "interface" means — **any allocator looks the same from the outside.**
+
+Same idea as Python's duck typing, Rust's `dyn Trait`, or Go's interfaces. Zig just makes the mechanism visible.
+
+</details>
+
+### When would you use a different allocator?
+
+GPA is the training-wheels allocator — great for learning and debugging. But Zig offers others for different situations:
+
+| Situation | Allocator | Why |
+|---|---|---|
+| Learning, debugging | `GeneralPurposeAllocator` | Leak detection, use-after-free catches |
+| Many allocations freed together | `ArenaAllocator` | Free everything in one shot |
+| Known memory budget, no OS calls | `FixedBufferAllocator` | Allocates from a byte buffer you provide |
+| Calling C libraries | `c_allocator` | Wraps malloc/free |
+
+The beauty is that **all allocators share the same interface**. Swap the one line where you create the allocator and nothing else changes. That's why `word_freq.zig` passes `allocator` around instead of using `gpa` directly.
+
+## `defer` — cleanup that writes itself
+
+The pattern appears three times in `word_freq.zig`:
+
+```{.zig}
+var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+defer { ... gpa.deinit(); ... }
+
+const args = try std.process.argsAlloc(allocator);
+defer std.process.argsFree(allocator, args);
+
+const content = try file.readToEndAlloc(allocator, 10 * 1024 * 1024);
+defer allocator.free(content);
+```
+
+The convention: **allocate, then immediately `defer` the cleanup.** The open/close pair stays visually adjacent even though they execute at opposite ends of the scope. You never have to scroll to the bottom of a function hunting for the cleanup code, and you can't forget it.
+
+Critically, `defer` runs **even if the function exits early via error**. All those `try` calls? If any of them fail, every deferred cleanup still runs. No leaks.
+
+One subtlety: `defer` is scoped to the **block**, not always the whole function. If you put a `defer` inside an `if` or `while`, it runs when *that block* exits. Matters when you're allocating inside loops.
+
+## What's next
+
+We've only scratched the surface of `word_freq.zig`. There's tokenization, hash maps, sorting, format strings, and the comptime stopword list still to unpack. But the foundations are here: `pub`, `!void`, `const` vs `var`, allocators, interfaces, fat pointers, and `defer`.
+
+Next time we'll keep reading.

@@ -42,7 +42,9 @@ That's the whole pipeline. CI handles the rest — a GitHub Actions workflow ren
 
 This Zig book requires Python. Not for anything Zig-related — Quarto uses Jupyter to execute code blocks, and Jupyter is Python.
 
-The natural approach would be to use Jupyter's `bash_kernel` to run shell commands directly. On Windows, that kernel depends on `pexpect`, which needs Unix pseudo-terminals, so it doesn't work. The workaround: each executable block uses a hidden Python cell (`#| echo: false`) that calls `subprocess.run` to invoke `zig run`. The rendered output shows only the Zig command and its result.
+Quarto itself is a rendering engine. It doesn't bundle Jupyter — when it encounters an executable `{python}` cell, it hands it off to Jupyter to run. So the execution chain is: Quarto → Jupyter → Python → `subprocess.run` → `zig run`. Without Jupyter installed, Quarto errors on every executable cell.
+
+The natural approach would be to use Jupyter's `bash_kernel` to run shell commands directly, cutting Python out of the chain. On Windows, that kernel depends on `pexpect`, which needs Unix pseudo-terminals, so it doesn't work. The workaround: each executable block uses a hidden Python cell (`#| echo: false`) that calls `subprocess.run` to invoke `zig run`. The rendered output shows only the Zig command and its result.
 
 Here's the local setup:
 

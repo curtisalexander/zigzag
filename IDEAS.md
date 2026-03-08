@@ -11,9 +11,13 @@ Fire off an idea anytime; it lands here.
 
 ## Big picture
 
+- **Odin comparisons throughout.** Odin shares a lot of philosophy with Zig (explicit allocators, `defer`, no hidden control flow, manual memory management). Include natural comparison points as they come up — not forced "vs" sections, but quick asides when something is notably similar or different. `defer`, error handling, and generics are good starting points.
+
 - **Understand how programming languages work.** Lexing, parsing, ASTs, code generation — the whole pipeline. Building the awk tool (above) could be a vehicle for this. Or maybe a tiny expression language in Zig as a stepping stone.
 
 ## Language concepts to explore
+
+- **Pointers from scratch.** Do this early. Slow, methodical walkthrough: store a value in memory, get its address with `&`, see the address printed, pass the pointer around, dereference with `.*` to get the value back. Build up from there to pointer-to-pointer, slices as fat pointers, `*const` vs `*T`. Make the invisible visible — print addresses, draw the boxes. This is the foundation for understanding allocators, slices, interfaces, and everything else.
 
 - **What IS allocation?** Stack vs. heap — what's actually happening? When we call an allocator, what syscall fires? (`mmap`? `sbrk`? `VirtualAlloc` on Windows?) Why do languages hide this? Why does Zig NOT hide it? What does the OS actually do when you say "give me memory"? Virtual memory, pages, the whole story. This is foundational — understand this and the allocator stuff clicks.
 

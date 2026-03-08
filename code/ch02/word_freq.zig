@@ -16,15 +16,15 @@
 // Zig handles allocators: nothing is implicit.
 //
 // ┌─────────────────────────────────────────────────────────────────┐
-// │ TRY IT: The summary header shows "Unique words" but not the    │
-// │ total number of words processed. Can you add that?             │
+// │ TRY IT: The summary header shows "Unique words" but not the     │
+// │ total number of words processed. Can you add that?              │
 // │                                                                 │
 // │ You need three things:                                          │
 // │   1. A counter variable (var, not const!) before the loop       │
 // │   2. An increment inside the tokenize loop                      │
 // │   3. A print line in the summary section                        │
 // │                                                                 │
-// │ Hint: look at how `counts.count()` is used in the summary,     │
+// │ Hint: look at how `counts.count()` is used in the summary,      │
 // │ then add your own line next to it.                              │
 // │                                                                 │
 // │ Expected output for Shakespeare: ~900,000 total words.          │
@@ -424,7 +424,7 @@ pub fn main() !void {
 
 // ┌─────────────────────────────────────────────────────────────────┐
 // │ EXPLORE: Comptime in action! This function checks if a word is  │
-// │ a common English stopword. The list is defined at comptime —     │
+// │ a common English stopword. The list is defined at comptime —    │
 // │ it's baked into the binary. No heap allocation, no hash map     │
 // │ setup at runtime.                                               │
 // │                                                                 │
