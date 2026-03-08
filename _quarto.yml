@@ -1,0 +1,23 @@
+project:
+  type: book
+  output-dir: _book
+
+book:
+  title: "ZigZag"
+  subtitle: "Learning Zig through conversation"
+  author: "c4lex"
+  date: today
+  repo-url: https://github.com/c4lex/zigzag
+  repo-actions: [edit, issue]
+  chapters:
+    - chapters/00-what-this-is.qmd
+    - chapters/01-hello-zig.qmd
+  appendices:
+    - chapters/colophon.qmd
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    code-copy: true
+    code-overflow: wrap

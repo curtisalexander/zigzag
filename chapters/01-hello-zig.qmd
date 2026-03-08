@@ -1,0 +1,5 @@
+# Hello, Zig {#sec-hello-zig}
+
+::: {.callout-note}
+This chapter is a placeholder. The real thing gets written in Session 01.
+:::

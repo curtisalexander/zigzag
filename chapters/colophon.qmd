@@ -1,0 +1,36 @@
+# Colophon {.unnumbered}
+
+ZigZag was written in public, one conversation at a time. Here's what was on the workbench.
+
+## The stack
+
+| Tool | Version | What it does here |
+|---|---|---|
+| [Zig](https://ziglang.org/) | 0.15.2 | The language being learned |
+| [Claude Code](https://claude.com/product/claude-code) | 2.1.71 | AI coding agent — the other half of the conversation |
+| Claude Opus 4.6 | `claude-opus-4-6` | The model behind the agent |
+| [Quarto](https://quarto.org/) | 1.8.27 | Turns `.qmd` files into the book you're reading |
+
+::: {.callout-note}
+These are the versions at the start of the project (March 2026). Things will update as the book grows. If a version change matters — if Zig ships a breaking release or Quarto changes how code blocks work — I'll note it in the relevant chapter.
+:::
+
+## How the pieces fit together
+
+**Claude Code** runs in a terminal. It reads files, writes files, runs commands, and holds a conversation while doing all of that. The model powering it — **Claude Opus 4.6** — is what actually generates the responses, writes the code, and occasionally goes on philosophical tangents that I choose not to rein in.
+
+**Quarto** takes the `.qmd` chapter files (Markdown with some extensions) and renders them into the HTML site you're reading. Code blocks with `{bash}` actually execute at render time — so when you see output from `zig run`, that's real output from a real compiler, frozen into the page.
+
+**Zig** is Zig. A single binary. No runtime. The entire toolchain fits in a folder you can move around. The compiler, the build system, the test runner — it's all one thing. We'll talk about why that matters.
+
+## The process
+
+1. Open Claude Code in the project directory
+2. Have a conversation about a Zig concept
+3. Write and run code during the conversation
+4. Save the session log to `sessions/`
+5. Turn the interesting parts into a chapter
+6. `quarto render` to build the book
+7. Repeat
+
+That's the whole pipeline. No custom tooling, no CI/CD (yet), no elaborate build process. Just conversations, files, and a render command.

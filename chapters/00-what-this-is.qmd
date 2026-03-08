@@ -1,0 +1,161 @@
+# What This Is {.unnumbered}
+
+This is a book about learning Zig. It is not written by someone who knows Zig.
+
+That sentence should probably disqualify everything that follows, but I think it's actually the point. Most programming books are written *after* the learning is done — after the rough edges have been sanded off, after the confusing parts have been quietly rearranged into a narrative that makes them look inevitable. You get the clean version. The version where every concept arrives in the right order, every example compiles on the first try, and nobody ever spends forty minutes confused about why `@intCast` wants a return type through the calling convention instead of as an argument.
+
+This is not that book.
+
+## How it works
+
+I learn Zig by talking to an AI. Not in the "I paste errors into ChatGPT" sense — in the sense that the conversation *is* the learning. I show up with a vague idea of what I want to understand, and we talk through it. I write code, run it, get confused, ask questions, get less confused, write more code. Sometimes I go sideways. Sometimes I go backwards. Sometimes I end up somewhere I didn't expect, and that turns out to be the most interesting part.
+
+Then I take those conversations and turn them into chapters.
+
+The raw sessions live in the `sessions/` folder of this project's repository. They're the director's commentary — the mess behind the edit. You can read them if you want to see how the sausage gets made. Or you can ignore them entirely and just read the chapters. Both are fine.
+
+## Who this is for
+
+You, probably, if:
+
+- You write Python or JavaScript for a living and have the nagging sense that you're missing something about how computers actually work
+- You've looked at Rust and thought "this is interesting but also a lot"
+- You want to learn a systems language but don't want to pretend you already know what a linker does
+- You're comfortable with the idea that a book about programming might occasionally wander into philosophy, or history, or the nature of documentation itself
+
+If you want a reference manual, the [Zig language reference](https://ziglang.org/documentation/master/) is excellent and free. If you want a clean tutorial, [ziglearn.org](https://ziglearn.org/) exists. This is neither of those things.
+
+## The shape of the book
+
+The early chapters are small. Hello world, types, control flow — the standard opening moves. Code runs locally through shell commands, and the output gets frozen into the page when the book renders. Nothing fancy.
+
+The middle chapters grow. Real projects start to accumulate in the `code/` directory. The build system shows up. Patterns emerge. Things that confused me in chapter 3 start making sense in chapter 8, and I'll tell you when that happens because the *when* is part of the story.
+
+The late chapters are where it gets interesting. Zig compiles to WebAssembly, and WebAssembly runs in the browser, which means — in theory — you could take the code examples in this book and make them *runnable*. Right here. In the page. No install, no setup, just a Run button.
+
+Building that is a significant project. It's also a significant Zig project. So the book's final act is building the thing that makes the book better. The last chapter improves chapter one. I like the recursion of that.
+
+## ↯ On tangents
+
+You'll see this symbol — ↯ — marking sections where I've gone off the main path. These aren't apologies. A tangent about the Greek roots of the Socratic method isn't a distraction from learning Zig; it's a *different kind* of learning about the same thing. The zigzag is the path.
+
+Some tangents are short — a paragraph, a stray thought. Others are full sections with their own headings. I won't always signal which kind you're getting. That's part of the fun.
+
+If you're the kind of reader who skips forewords and hates digressions, you can skip every ↯ section and still learn Zig just fine. But I think you'll miss something.
+
+Speaking of which —
+
+## ↯ Starting from nothing
+
+If you wanted to do exactly what I'm doing — learn a language in public, with an AI, and turn it into a book — here's everything you'd need. I'm spelling this out because when I started, I had *none* of it. No project directory. No scaffolding. No agent instructions. No outline. I opened a conversation with Claude, said "I want to learn Zig and write a book about it," and we started talking.
+
+That conversation became Session 0. Session 0 became this chapter. This chapter is telling you how it was made. We're already recursive and we haven't written a line of Zig.
+
+### The tools
+
+You need three things.
+
+**An AI coding agent.** I use [Claude Code](https://claude.com/product/claude-code), Anthropic's CLI tool. It lives in your terminal, reads your files, runs commands, and — critically — it can hold a long conversation while doing all of that. That matters because the conversation *is* the method. You're not pasting snippets into a chatbot; you're thinking out loud with something that can also edit your files.
+
+Install it:
+
+```bash
+# All platforms (macOS, Linux, Windows via Git Bash or WSL)
+curl -fsSL https://claude.ai/install.sh | bash
+```
+
+On Windows, you'll need [Git for Windows](https://gitforwindows.org/) installed first (which gives you Git Bash), or run under WSL. Either works.
+
+**Quarto.** This is what turns `.qmd` files into a website. It's a publishing system built on Pandoc — but it bundles its own Pandoc, so you don't install that separately. You don't need R or Python either, unless you're using those languages' code engines. We're not.
+
+::: {.panel-tabset}
+
+## macOS
+
+```bash
+brew install quarto
+```
+
+## Windows
+
+```powershell
+winget install Posit.Quarto
+```
+
+## Linux (Ubuntu/Debian)
+
+```bash
+sudo apt-get install quarto
+```
+
+## Any platform
+
+Download the installer from [quarto.org/docs/get-started](https://quarto.org/docs/get-started/).
+
+:::
+
+**Zig.** A single binary. No runtime, no package manager drama, no dependency graph that makes you question your career choices. This is one of the reasons I picked it.
+
+::: {.panel-tabset}
+
+## macOS
+
+```bash
+brew install zig
+```
+
+## Windows
+
+```powershell
+winget install zig.zig
+```
+
+## Linux
+
+```bash
+# Snap
+sudo snap install zig --classic --beta
+
+# Or download directly
+# See https://ziglang.org/download/
+```
+
+## Any platform
+
+Grab a build from [ziglang.org/download](https://ziglang.org/download/), extract it, add it to your PATH. Done.
+
+:::
+
+That's it. Three tools. If you can open a terminal, you can do this. (Exact versions and how the pieces fit together are in the [Colophon](colophon.qmd).)
+
+### The method
+
+There isn't really a method. That's the honest answer. I open Claude Code in a project directory, I say "I want to understand comptime" or "why does Zig make me handle errors this way," and we talk. Sometimes I write code during the conversation. Sometimes the AI writes code and I poke at it. Sometimes we go on tangents about the philosophy of memory allocation and I don't apologize for it.
+
+After the session, I have a conversation log and some code. I turn the interesting parts into a chapter. The boring parts — the false starts, the misunderstandings that turned out to be my fault — those stay in the session logs for anyone who wants them.
+
+If you're going to do this yourself, the only advice I have is: don't plan too much. I had a planning session (Session 0) where we decided on a name, a structure, and a vague narrative arc. Then we started. The book figured itself out as we wrote it. Yours will too.
+
+### What this looked like in practice
+
+I opened a blank folder. No `git init`, no template, no `npm create whatever`. I started a conversation with an AI about what this project should be. We talked about names for an embarrassingly long time. We talked about voice and structure and whether DFW-style footnotes were a good idea (they're not, in a technical book, but it was fun to consider). We talked about how code execution should work and agreed to start simple.
+
+Then I said "OK, scaffold it," and the AI created the directory structure, the Quarto config, and this chapter. The chapter you're reading was the first file written. It was written *about* a process that had just barely started. I told it to capture the voice before we knew what the voice was, and somehow that worked, because the constraint forced a decision.
+
+The point is: you don't need to know what you're doing before you start. You especially don't need to know the language you're writing about. That's the whole idea. Start confused. Write it down. Figure it out in public.
+
+## What you need
+
+To read this book: a browser. To follow along:
+
+- [Zig](https://ziglang.org/download/) (the book tracks a recent stable release; I'll note the version)
+- A text editor
+- Willingness to be confused for a while
+
+Zig's toolchain is a single binary. No IDE plugins, no build tool setup, no twelve-step environment configuration. This is one of the things that attracted me to it, and we'll talk about why that matters.
+
+## Let's go
+
+The next chapter is "Hello, Zig" and it starts the way every programming book starts, except I'll be honest about the parts that are weird. Because Zig's hello world *is* a little weird if you're coming from Python, and pretending otherwise doesn't help anyone.
+
+Learning Zig is rarely a straight line. Let's zigzag.
