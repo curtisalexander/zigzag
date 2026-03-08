@@ -3,6 +3,12 @@
 /.venv/
 *.zig-cache/
 zig-out/
+*.exe
+*.pdb
+*.o
+
+# Large data files — download instructions in code comments
+code/ch02/shakespeare.txt
 .DS_Store
 .claude/
 
